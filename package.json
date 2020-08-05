@@ -1,7 +1,7 @@
 {
   "name": "action-version-checker",
   "version": "1.0.0",
-  "description": "A GitHub action which makes sure that the version numbers are correct when pushing to master",
+  "description": "A GitHub action which makes sure that the version numbers match when pushing to master",
   "main": "index.js",
   "repository": {
     "type": "git",
