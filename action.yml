@@ -1,0 +1,10 @@
+name: "Version Checker"
+author: "AlexejheroYTB"
+description: "Makes sure that the version numbers are correct when pushing to master"
+inputs:
+  files:
+    description: "A string consisting of file paths and RegEx expressions; Group 1 will be interpreted as the version number."
+    required: true
+runs:
+  using: "node12"
+  main: "index.js"

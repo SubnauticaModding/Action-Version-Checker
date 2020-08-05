@@ -1,0 +1,20 @@
+{
+  "name": "action-version-checker",
+  "version": "1.0.0",
+  "description": "A GitHub action which makes sure that the version numbers are correct when pushing to master",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SubnauticaModding/Action-Version-Checker.git"
+  },
+  "author": "AlexejheroYTB",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/SubnauticaModding/Action-Version-Checker/issues"
+  },
+  "homepage": "https://github.com/SubnauticaModding/Action-Version-Checker#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^4.0.0"
+  }
+}
