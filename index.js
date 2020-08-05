@@ -45,7 +45,7 @@ function getDictionary(text) {
 function getAnnotations(dict) {
   const output = [];
   for (const file in dict) { // For each file in the dictionary
-    const contents = fs.readFileSync(file); // Read file's contents
+    const contents = fs.readFileSync(file, "utf-8"); // Read file's contents
     contents.split(/[\n\r]+/g).forEach((line, index) => { // For each line in the file
       for (const regexText of dict[file]) { // For each regex in the dictionary
         eval("const regex = " + regexText);
