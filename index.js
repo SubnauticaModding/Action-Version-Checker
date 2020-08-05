@@ -29,8 +29,8 @@ function getDictionary(text) {
   const results = {};
   const rows = text.split(/[\n\r]+/g);
   for (const row of rows) {
-    const file = row.split("|")[0];
-    const regex = row.split("|")[1];
+    const file = row.split("|")[0].trim();
+    const regex = row.split("|")[1].trim();
 
     if (!results[file]) results[file] = [];
     results[file].push(regex);
