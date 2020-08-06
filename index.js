@@ -63,7 +63,7 @@ function getAnnotations(dict) {
         for (const match of matches) { // For each match
           if (match[1]) { // If match is valid
             output.push({ // Output match
-              "message": "### Version numbers don't match.<br>There are:",
+              "message": "Version numbers don't match.\n\nThere are:",
               "path": file,
               "column": {
                 "start": match.index, // The start of the match // TODO: Make it show the start of the first group 
@@ -97,7 +97,7 @@ function addCount(annotations, versions) {
 
   for (const annotation of annotations) {
     for (const version in count) {
-      annotation.message += `<br>- \`${count[version]}\` occurrences of \`${version}\``;
+      annotation.message += `\n- ${count[version]} occurrences of "${version}"`; // TODO: Sort this with a custom version comparer
     }
   }
 }
