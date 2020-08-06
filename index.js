@@ -71,26 +71,26 @@ function getAnnotations(dict) {
       for (const regexText of dict[file]) { // For each regex in the dictionary
         /** @type {RegExp} */
         var regex;
-        eval("regex = " + regexText);
+        eval("regex = " + regexText); // Directly obtain the regex from the string without worrying about escaping stuff
         const regex2 = new MultiRegExp2(regex);
         const matches = [...line.matchAll(regex)]; // Match the regex on the line
         for (const match of matches) { // For each match
           if (match[1]) { // If match is valid
             /** @type {{match:string,start:number,end:number}} */
-            const indexMatch = regex2.execForGroup(match[0], 1);
+            const indexMatch = regex2.execForGroup(match[0], 1); // Get the starting index of the first group, i.e. the version
             output.push({ // Output match
               "message": "Version numbers don't match.\n\nThere are:",
               "path": file,
               "column": {
-                "start": match.index + indexMatch.start,
-                "end": match.index + match[0].length + indexMatch.start,
+                "start": match.index + indexMatch.start, // The start of the first group, i.e. the version
+                "end": match.index + match[1].length + indexMatch.start, // The end of the first group, i.e. the version
               },
               "line": {
                 "start": index + 1, // The line of the match
                 "end": index + 1,
               },
               "level": "failure",
-              "text": match[1], // The first group of the match
+              "text": match[1], // The first group of the match, i.e. the version
             });
           }
         }
