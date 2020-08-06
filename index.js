@@ -206,6 +206,7 @@ function setLowerThanMaster(annotations, prVersion, masterVersion) {
 function cleanVersion(version) {
   if (version.startsWith("v")) version = version.substr(1);
   while (version.endsWith(".0")) version = version.substr(0, version.length - 2);
+  if (!version.includes(".")) version += ".0";
   return version;
 }
 
