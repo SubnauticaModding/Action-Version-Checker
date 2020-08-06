@@ -2,7 +2,7 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 
 const fs = require("fs");
-const MultiRegExp2 = require("multi-regexp2");
+const MultiRegExp2 = require("multi-regexp2").default;
 const { start } = require("repl");
 
 try {
