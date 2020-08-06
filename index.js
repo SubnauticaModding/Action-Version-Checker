@@ -97,7 +97,7 @@ function addCount(annotations, versions) {
 
   for (const annotation of annotations) {
     for (const version in count) {
-      annotation.message += `\n- ${count[version]} occurrences of "${version}"`; // TODO: Sort this with a custom version comparer
+      annotation.message += `\n- ${count[version]} occurrence${count[version] == 1 ? "" : "s"} of "${version}"`; // TODO: Sort this with a custom version comparer or by count
     }
   }
 }
