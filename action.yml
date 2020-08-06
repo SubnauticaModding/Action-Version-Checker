@@ -5,6 +5,14 @@ inputs:
   files:
     description: "A string consisting of file paths and RegEx expressions; Group 1 will be interpreted as the version number."
     required: true
+  master_repo_path:
+    description: "The path to the already cloned master branch of the repository. If none, making sure that the new version is different from master will be skipped."
+    required: false
+outputs:
+  annotations_path:
+    description: "The path to an annotations file which can be used by the 'Attest/annotations-action' action."
+  failed_check_path:
+    description: "The path to a file which only exists if the version checker has found issues."
 runs:
   using: "node12"
   main: "index.js"
