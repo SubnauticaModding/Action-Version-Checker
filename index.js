@@ -17,7 +17,7 @@ try {
     console.log("The version numbers don't match!");
     console.log(versions);
     fs.writeFileSync("./annotations.json", JSON.stringify(annotations));
-    fs.writeFileSync("./failed", "1");
+    fs.writeFileSync("./failed.txt", "1");
   } else {
     console.log("The version numbers match.");
     console.log(versions);
