@@ -14,6 +14,7 @@ try {
   if (versions.length == 0) return;
 
   if (versions.filter(x => x == versions[0]).length != versions.length) {
+    console.log(annotations);
     fs.writeFileSync("./annotations.json", JSON.stringify(annotations));
   } else {
     fs.writeFileSync("./annotations.json", "[]");
