@@ -19,7 +19,7 @@ try {
   if (versions.filter(x => x == versions[0]).length != versions.length) {
     console.log("Version numbers don't match.");
     fs.writeFileSync("./annotations.json", JSON.stringify(annotations));
-    core.setFailed("The version numbers don't match!");
+    // core.setFailed("The version numbers don't match!");
   } else {
     fs.writeFileSync("./annotations.json", "[]");
   }
