@@ -10,6 +10,7 @@ try {
   const dictionary = getDictionary(text);
   const annotations = getAnnotations(dictionary);
   const versions = annotations.map(x => x.text);
+  addCount(annotations, versions);
 
   if (versions.length == 0) return;
 
@@ -23,6 +24,8 @@ try {
     console.log(versions);
     fs.writeFileSync("./annotations.json", "[]");
   }
+
+  // TODO: Make sure version number isn't the same as master
 } catch (error) {
   core.setFailed("An error has occurred: " + error.message);
 }
@@ -60,7 +63,7 @@ function getAnnotations(dict) {
         for (const match of matches) { // For each match
           if (match[1]) { // If match is valid
             output.push({ // Output match
-              "message": "This version number doesn't match other ones.",
+              "message": "### Version numbers don't match.<br>There are:", // TODO: Count instances of each version number
               "path": file,
               "column": {
                 "start": match.index, // The start of the match // TODO: Make it show the start of the first group 
@@ -79,4 +82,22 @@ function getAnnotations(dict) {
     });
   }
   return output;
+}
+
+/**
+ * @param {{message: "This version number doesn't match other ones.", path: string, column: {start: number, end: number}, line: {start: number, end: number}, level: "failure", text: string}[]} annotations 
+ * @param {string[]} versions 
+ */
+function addCount(annotations, versions) {
+  const count = {};
+  for (const version of versions) {
+    if (!count[version]) count[version] = 0;
+    count[version]++;
+  }
+
+  for (const annotation of annotations) {
+    for (const version in count) {
+      annotation.message += `<br>- \`${count[version]}\` occurrences of \`${version}\``;
+    }
+  }
 }
