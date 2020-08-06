@@ -61,15 +61,15 @@ function getAnnotations(dict) {
               "message": "This version number doesn't match other ones.",
               "path": file,
               "column": {
-                "start": match.index,
-                "end": match.index + match[0].length,
+                "start": match.index, // The start of the match // TODO: Make it show the start of the first group 
+                "end": match.index + match[0].length, // The end of the match // TODO: Make it show the end of the first group
               },
               "line": {
-                "start": index + 1,
+                "start": index + 1, // The line of the match
                 "end": index + 1,
               },
               "level": "failure",
-              "text": match[0],
+              "text": match[1], // The first group of the match
             });
           }
         }
