@@ -2,6 +2,8 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 
 const fs = require("fs");
+const MultiRegExp2 = require("multi-regexp2");
+const { start } = require("repl");
 
 try {
   console.log("Examining files...");
@@ -31,6 +33,14 @@ try {
 }
 
 /**
+ * This function turns a custom string into a dictionary
+ * @example 
+ * // Example of YAML syntax
+ * with: 
+ *   files: |
+ *     QModManager/Properties/AssemblyInfo.cs | /\[assembly: AssemblyVersion\("v([0-9.]+)"\)\]/g
+ *     Installer/QModsInstallerScript.iss     | /version: "v([0-9.]+)"/g
+ *     Data/latest-version.txt                | /([0-9.]+)/g
  * @param {string} text 
  * @returns {{[file: string]: string}}
  */
@@ -48,6 +58,7 @@ function getDictionary(text) {
 }
 
 /**
+ * This function turns the dictionary returned by `getDictionary(string)` into an array of annotations which can be understood by the `Attest/annotations-action` action
  * @param {{[file: string]: string}} dict 
  * @returns {{message: "This version number doesn't match other ones.", path: string, column: {start: number, end: number}, line: {start: number, end: number}, level: "failure", text: string}[]}
  */
@@ -57,17 +68,21 @@ function getAnnotations(dict) {
     const contents = fs.readFileSync("./" + file, "utf-8"); // Read file's contents
     contents.split(/[\n\r]+/g).forEach((line, index) => { // For each line in the file
       for (const regexText of dict[file]) { // For each regex in the dictionary
+        /** @type {RegExp} */
         var regex;
         eval("regex = " + regexText);
+        const regex2 = new MultiRegExp2(regex);
         const matches = [...line.matchAll(regex)]; // Match the regex on the line
         for (const match of matches) { // For each match
           if (match[1]) { // If match is valid
+            /** @type {{match:string,start:number,end:number}} */
+            const indexMatch = regex2.execForGroup(match[0], 1);
             output.push({ // Output match
               "message": "Version numbers don't match.\n\nThere are:",
               "path": file,
               "column": {
-                "start": match.index, // The start of the match // TODO: Make it show the start of the first group 
-                "end": match.index + match[0].length, // The end of the match // TODO: Make it show the end of the first group
+                "start": match.index + indexMatch.start,
+                "end": match.index + match[0].length + indexMatch.start,
               },
               "line": {
                 "start": index + 1, // The line of the match
@@ -85,6 +100,7 @@ function getAnnotations(dict) {
 }
 
 /**
+ * This function appends the number of occurrences of each version to the message of the annotations
  * @param {{message: "This version number doesn't match other ones.", path: string, column: {start: number, end: number}, line: {start: number, end: number}, level: "failure", text: string}[]} annotations 
  * @param {string[]} versions 
  */
