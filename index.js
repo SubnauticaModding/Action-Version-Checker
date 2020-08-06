@@ -2,6 +2,7 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 
 const fs = require("fs");
+const path = require("path");
 
 try {
   console.log("Examining files...");
@@ -11,13 +12,9 @@ try {
   const annotations = getAnnotations(dictionary);
   const versions = annotations.filter(x => x.text);
 
-  if (versions.length == 0) {
-    console.log("No occurences of versions found.");
-    return;
-  }
+  if (versions.length == 0) return;
 
   if (versions.filter(x => x == versions[0]).length != versions.length) {
-    console.log("Version numbers don't match.");
     fs.writeFileSync("./annotations.json", JSON.stringify(annotations));
   } else {
     fs.writeFileSync("./annotations.json", "[]");
@@ -50,7 +47,7 @@ function getDictionary(text) {
 function getAnnotations(dict) {
   const output = [];
   for (const file in dict) { // For each file in the dictionary
-    const contents = fs.readFileSync(file, "utf-8"); // Read file's contents
+    const contents = fs.readFileSync(path.join(__dirname, file), "utf-8"); // Read file's contents
     contents.split(/[\n\r]+/g).forEach((line, index) => { // For each line in the file
       for (const regexText of dict[file]) { // For each regex in the dictionary
         var regex;
