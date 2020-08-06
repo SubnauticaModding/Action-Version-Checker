@@ -1,6 +1,7 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
 
+const cv = require("compare-versions");
 const fs = require("fs");
 const MultiRegExp2 = require("multi-regexp2").default;
 const path = require("path");
@@ -11,7 +12,7 @@ try {
   const text = core.getInput("files", { required: true });
   const dictionary = getDictionary(text);
   const annotations = getAnnotations(dictionary);
-  const versions = annotations.map(x => x.text);
+  const versions = cleanAndSortVersions(annotations.map(x => x.text));
   addCount(annotations, versions);
 
   if (versions.length == 0) {
@@ -22,7 +23,7 @@ try {
   core.setOutput("annotations_path", "./annotations.json");
   core.setOutput("failed_check_path", "./failed.txt");
 
-  if (versions.filter(x => x == versions[0]).length != versions.length) {
+  if (versions.filter(x => cv(x, versions[0]) == 0).length != versions.length) {
     console.log("The version numbers on the PR branch don't match!");
     console.log(versions);
     console.log(annotations);
@@ -51,12 +52,12 @@ try {
     return;
   }
 
-  if (masterVersions.filter(x => x == masterVersions[0]).length != masterVersions.length) {
+  if (masterVersions.filter(x => cv(x, masterVersions[0]) == 0).length != masterVersions.length) {
     console.log("The version numbers on the master branch don't match! Skipping master check.");
     return;
   }
 
-  if (versions[0] == masterVersions[0]) {
+  if (cv(versions[0], masterVersions[0]) == 0) {
     console.log("PR branch version is the same as master branch version!");
     console.log(versions[0]);
     setSameAsMaster(annotations, versions[0]);
@@ -146,15 +147,23 @@ function getAnnotations(dict, _path = ".") {
  * @param {string[]} versions 
  */
 function addCount(annotations, versions) {
-  const count = {};
+  const countObj = {};
   for (const version of versions) {
-    if (!count[version]) count[version] = 0;
-    count[version]++;
+    if (!countObj[version]) countObj[version] = 0;
+    countObj[version]++;
+  }
+
+  const count = [];
+  for (const version in countObj) {
+    count.push({
+      version: cleanVersion(version),
+      count: countObj[version],
+    });
   }
 
   for (const annotation of annotations) {
-    for (const version in count) {
-      annotation.message += `\n- ${count[version]} occurrence${count[version] == 1 ? "" : "s"} of "${version}"`; // TODO: Sort this with a custom version comparer or by count
+    for (const version of count) {
+      annotation.message += `\n- ${version.count} occurrence${version.count == 1 ? "" : "s"} of "${version.version}"`;
     }
   }
 }
@@ -168,4 +177,30 @@ function setSameAsMaster(annotations, version) {
   for (const annotation of annotations) {
     annotation.message = `The version number is the same as the master branch! (${version})`;
   }
+}
+
+/**
+ * Removes leading `v` and trailing `.0` from versions
+ * @param {string} version
+ * @returns {string}
+ */
+function cleanVersion(version) {
+  if (version.startsWith("v")) version = version.substr(1);
+  while (version.endsWith(".0")) version = version.substr(0, version.length - 2);
+  return version;
+}
+
+/**
+ * @example
+ * [ "1.0.1", "1.1", "1.0.1.0" ]
+ * // Will turn into
+ * [ "1.0.1", "1.0.1", "1.1" ]
+ * @param {string[]} versions 
+ */
+function cleanAndSortVersions(versions) {
+  const result = [];
+  for (var version of versions) {
+    result.push(cleanVersion(version));
+  }
+  return result.sort();
 }
