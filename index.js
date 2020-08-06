@@ -44,7 +44,7 @@ function getDictionary(text) {
 
 /**
  * @param {{[file: string]: string}} dict 
- * @returns {{message: "This version number doesn't match other ones.", path: string, column: {start: number, end: number}, line: {start: number, end: number}, level: "warning", text: string}[]}
+ * @returns {{message: "This version number doesn't match other ones.", path: string, column: {start: number, end: number}, line: {start: number, end: number}, level: "failure", text: string}[]}
  */
 function getAnnotations(dict) {
   const output = [];
@@ -68,7 +68,7 @@ function getAnnotations(dict) {
                 "start": index + 1,
                 "end": index + 1,
               },
-              "level": "warning",
+              "level": "failure",
               "text": match[0],
             });
           }
