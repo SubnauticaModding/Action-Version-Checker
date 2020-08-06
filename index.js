@@ -9,7 +9,7 @@ try {
   const text = core.getInput("files");
   const dictionary = getDictionary(text);
   const annotations = getAnnotations(dictionary);
-  const versions = annotations.filter(x => x.text);
+  const versions = annotations.map(x => x.text);
 
   if (versions.length == 0) return;
 
