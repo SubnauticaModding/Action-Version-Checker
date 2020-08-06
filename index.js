@@ -64,6 +64,13 @@ try {
     fs.writeFileSync("./annotations.json", JSON.stringify(annotations));
     fs.writeFileSync("./failed.txt", "1");
     return;
+  } else if (cv(versions[0], masterVersions[0]) == -1) {
+    console.log("PR branch version is lower than master branch version!");
+    console.log(`PR: ${versions[0]}, MASTER: ${masterVersions[0]}`);
+    setLowerThanMaster(annotations, versions[0], masterVersions[0]);
+    fs.writeFileSync("./annotations.json", JSON.stringify(annotations));
+    fs.writeFileSync("./failed.txt", "1");
+    return;
   } else {
     console.log("PR branch version is not the same as the master branch version.");
     console.log(`PR: ${versions[0]}, MASTER: ${masterVersions[0]}`);
@@ -180,6 +187,18 @@ function setSameAsMaster(annotations, version) {
 }
 
 /**
+ * This function changes the message of the annotations to specify that the version is lower than the master version
+ * @param {{message: string, path: string, column: {start: number, end: number}, line: {start: number, end: number}, level: "failure", text: string}[]} annotations 
+ * @param {string} prVersion 
+ * @param {string} masterVersion 
+ */
+function setLowerThanMaster(annotations, prVersion, masterVersion) {
+  for (const annotation of annotations) {
+    annotation.message = `The version number (${prVersion}) is lower than the master branch! (${masterVersion})`;
+  }
+}
+
+/**
  * Removes leading `v` and trailing `.0` from versions
  * @param {string} version
  * @returns {string}
@@ -202,5 +221,5 @@ function cleanAndSortVersions(versions) {
   for (var version of versions) {
     result.push(cleanVersion(version));
   }
-  return result.sort();
+  return result.sort(cv);
 }
