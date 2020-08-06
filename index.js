@@ -28,10 +28,10 @@ try {
  */
 function getDictionary(text) {
   const results = {};
-  const rows = text.split(/[\n\r]+/g);
-  for (const row of rows) {
-    const file = row.split("|")[0].trim();
-    const regex = row.split("|")[1].trim();
+  const lines = text.split(/[\n\r]+/g);
+  for (const line of lines) {
+    const file = line.split("|")[0].trim();
+    const regex = line.split("|")[1].trim();
 
     if (!results[file]) results[file] = [];
     results[file].push(regex);
@@ -41,7 +41,7 @@ function getDictionary(text) {
 
 /**
  * @param {{[file: string]: string}} dict 
- * @returns {{message: "This version number doesn't match other ones.", path: string, column: {start: number, end: number}, row: {start: number, end: number}, level: "warning", text: string}[]}
+ * @returns {{message: "This version number doesn't match other ones.", path: string, column: {start: number, end: number}, line: {start: number, end: number}, level: "warning", text: string}[]}
  */
 function getAnnotations(dict) {
   const output = [];
@@ -61,7 +61,7 @@ function getAnnotations(dict) {
                 "start": match.index,
                 "end": match.index + match[0].length,
               },
-              "row": {
+              "line": {
                 "start": index + 1,
                 "end": index + 1,
               },
