@@ -63,7 +63,7 @@ function getAnnotations(dict) {
         for (const match of matches) { // For each match
           if (match[1]) { // If match is valid
             output.push({ // Output match
-              "message": "### Version numbers don't match.<br>There are:", // TODO: Count instances of each version number
+              "message": "### Version numbers don't match.<br>There are:",
               "path": file,
               "column": {
                 "start": match.index, // The start of the match // TODO: Make it show the start of the first group 
