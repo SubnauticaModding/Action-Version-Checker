@@ -115,7 +115,7 @@ function getAnnotations(dict, _path = ".") {
   const output = [];
   for (const file in dict) { // For each file in the dictionary
     const contents = fs.readFileSync(path.join(_path, file), "utf-8"); // Read file's contents
-    contents.split(/[\n\r]+/g).forEach((line, index) => { // For each line in the file
+    contents.split(/\n|(?:\r\n)/g).forEach((line, index) => { // For each line in the file
       for (const regexText of dict[file]) { // For each regex in the dictionary
         /** @type {RegExp} */
         var regex;
