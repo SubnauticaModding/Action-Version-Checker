@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/SubnauticaModding/Action-Version-Checker#readme",
   "dependencies": {
-    "@actions/core": "^1.2.4",
+    "@actions/core": "^1.2.6",
     "@actions/github": "^4.0.0",
     "compare-versions": "^3.6.0",
     "multi-regexp2": "^1.0.3"
